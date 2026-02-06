@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta property="og:title" content="Для Вики ❤️">
     <meta property="og:description" content="Маленький сюрприз для тебя">
-    <meta property="og:image" content="IMG_4669.jpeg">
-    <title>Для Вики ❤️</title>
+    <title>Для моей Викуси ❤️</title>
     <style>
         :root {
             --primary: #e01e37;
@@ -32,20 +31,16 @@
             align-items: center;
         }
 
-        /* Canvas Background */
         #canvas-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; pointer-events: none;
         }
 
-        /* Container */
         .container {
             width: 90%; max-width: 600px; margin: 2rem auto;
             text-align: center; z-index: 1; padding-bottom: 4rem;
         }
 
-        /* Header */
         header { margin-bottom: 2rem; animation: fadeInDown 1s ease; }
 
         h1 {
@@ -57,7 +52,7 @@
 
         .subtitle { font-size: 1.1rem; color: #800f2f; opacity: 0.9; }
 
-        /* Photo Frame */
+        /* Настройки фото */
         .photo-wrapper {
             position: relative; width: 220px; height: 220px;
             margin: 0 auto 2rem; border-radius: 50%; padding: 6px;
@@ -71,11 +66,12 @@
         }
         
         .photo-inner img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%; height: 100%; 
+            object-fit: cover; /* Заполняет круг без искажений */
+            object-position: center; /* Центрирует фото */
             transition: transform 0.3s;
         }
 
-        /* Timer Section */
         .timer-card {
             background: var(--glass); backdrop-filter: blur(10px);
             border-radius: 20px; padding: 1.5rem; margin-bottom: 2rem;
@@ -92,7 +88,6 @@
         .timer-val { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
         .timer-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; opacity: 0.7; }
 
-        /* Reasons Carousel */
         .reasons-container {
             position: relative; height: 120px; margin-bottom: 3rem; perspective: 1000px;
         }
@@ -110,7 +105,6 @@
 
         .reason-card.active { opacity: 1; transform: translateY(0) scale(1); z-index: 2; }
 
-        /* Interactive Question */
         .question-section {
             position: relative; min-height: 200px;
             animation: fadeInUp 0.8s ease 0.4s backwards;
@@ -138,7 +132,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        /* Modal */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
@@ -169,7 +162,7 @@
         <header>
             <div class="photo-wrapper">
                 <div class="photo-inner">
-                    <img id="main-photo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0iI2ZmZiI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48L3N2Zz4=" alt="Мы">
+                    <img id="main-photo" src="vika.png" alt="Мы" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0iI2ZmZiI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48L3N2Zz4='">
                 </div>
             </div>
             <h1 id="greeting">Привет!</h1>
@@ -205,25 +198,18 @@
     </div>
 
 <script>
-/**
- * КОНФИГУРАЦИЯ
- */
 const CONFIG = {
     name: "Вика", 
-    
     // Дата: 1 апреля 2021 (Месяц 3 = Апрель)
     startDate: new Date(2021, 3, 1), 
-    
-    // Имя картинки в папке с сайтом
-    photoName: "vika",
 
+    // Список причин (без кофе)
     reasons: [
         "Твоя улыбка освещает мой день",
         "С тобой я чувствую себя лучше",
         "Ты смеешься над моими шутками",
         "Твоя поддержка бесценна",
         "Ты самая красивая в мире",
-        "Ты готовишь самый вкусный кофе",
         "С тобой уютно даже просто молчать",
         "Ты мое вдохновение",
         "Люблю тебя с той самой весны 2021-го" 
@@ -239,7 +225,6 @@ class ValentineApp {
             btnNo: document.getElementById('btn-no'),
             modal: document.getElementById('success-modal'),
             greeting: document.getElementById('greeting'),
-            photo: document.getElementById('main-photo'),
             canvas: document.getElementById('canvas-bg')
         };
         this.ctx = this.dom.canvas.getContext('2d');
@@ -250,16 +235,6 @@ class ValentineApp {
 
     init() {
         this.dom.greeting.textContent = `Привет, ${CONFIG.name}!`;
-        
-        // Попытка загрузить vika.png, если нет - vika.jpg
-        const tryLoad = (ext) => {
-            const img = new Image();
-            img.src = `${CONFIG.photoName}.${ext}`;
-            img.onload = () => { this.dom.photo.src = img.src; };
-            if(ext === 'png') img.onerror = () => tryLoad('jpg');
-        };
-        tryLoad('png');
-        
         this.startTimer();
         this.renderReasons();
         this.setupInteractions();
@@ -312,7 +287,6 @@ class ValentineApp {
             btn.style.left = `${randX}px`;
             btn.style.top = `${randY}px`;
         };
-        // Поддержка и мыши, и тача
         this.dom.btnNo.addEventListener('mouseenter', moveBtn);
         this.dom.btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); moveBtn(); });
         this.dom.btnNo.addEventListener('click', moveBtn);
@@ -383,3 +357,4 @@ document.addEventListener('DOMContentLoaded', () => { new ValentineApp(); });
 </script>
 </body>
 </html>
+
