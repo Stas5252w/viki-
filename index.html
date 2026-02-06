@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta property="og:title" content="Для моей Викуси  ❤️">
+    <meta property="og:title" content="Для Викуси ❤️">
     <meta property="og:description" content="Маленький сюрприз для тебя">
-    <title>Для моей Викуси ❤️</title>
+    <title>Для Викуси ❤️</title>
     <style>
         :root {
             --primary: #e01e37;
@@ -43,16 +43,25 @@
 
         header { margin-bottom: 2rem; animation: fadeInDown 1s ease; }
 
+        /* Эффект печатания (курсор) */
         h1 {
             font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;
             background: linear-gradient(45deg, var(--primary), #a4133c);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             line-height: 1.2;
+            min-height: 1.2em; /* Чтобы текст не прыгал до начала печати */
         }
+        
+        /* Мигающий курсор после текста */
+        h1::after {
+            content: '|';
+            -webkit-text-fill-color: var(--primary);
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .subtitle { font-size: 1.1rem; color: #800f2f; opacity: 0.9; }
 
-        /* Настройки фото */
         .photo-wrapper {
             position: relative; width: 220px; height: 220px;
             margin: 0 auto 2rem; border-radius: 50%; padding: 6px;
@@ -67,8 +76,7 @@
         
         .photo-inner img {
             width: 100%; height: 100%; 
-            object-fit: cover; /* Заполняет круг без искажений */
-            object-position: center; /* Центрирует фото */
+            object-fit: cover; object-position: center;
             transition: transform 0.3s;
         }
 
@@ -162,10 +170,10 @@
         <header>
             <div class="photo-wrapper">
                 <div class="photo-inner">
-                    <img id="main-photo" src="IMG_4669.jpeg" alt="Мы" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0iI2ZmZiI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48L3N2Zz4='">
+                    <img id="main-photo" src="vika.png" alt="Мы" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0iI2ZmZiI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48L3N2Zz4='">
                 </div>
             </div>
-            <h1 id="greeting">Привет!</h1>
+            <h1 id="greeting"></h1>
             <p class="subtitle">Этот маленький сайт — для тебя.</p>
         </header>
 
@@ -199,11 +207,10 @@
 
 <script>
 const CONFIG = {
-    name: "Вика", 
+    name: "Викуся", 
     // Дата: 1 апреля 2021 (Месяц 3 = Апрель)
     startDate: new Date(2021, 3, 1), 
 
-    // Список причин (без кофе)
     reasons: [
         "Твоя улыбка освещает мой день",
         "С тобой я чувствую себя лучше",
@@ -234,13 +241,28 @@ class ValentineApp {
     }
 
     init() {
-        this.dom.greeting.textContent = `Привет, ${CONFIG.name}!`;
+        // Запуск эффекта печатания
+        this.typeText(this.dom.greeting, `Привет, ${CONFIG.name}!`, 100);
+        
         this.startTimer();
         this.renderReasons();
         this.setupInteractions();
         this.startBackgroundAnimation();
         window.addEventListener('resize', () => this.resizeCanvas());
         this.resizeCanvas();
+    }
+
+    typeText(element, text, speed) {
+        element.textContent = "";
+        let i = 0;
+        const type = () => {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        };
+        type();
     }
 
     startTimer() {
@@ -357,4 +379,5 @@ document.addEventListener('DOMContentLoaded', () => { new ValentineApp(); });
 </script>
 </body>
 </html>
+
 
